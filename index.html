@@ -3,8 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <title>Nodewarz</title>
+    <script src="dist/bundle.js"></script>
 </head>
 <body>
-    <script src="dist/bundle.js"></script>
+
+    <div>
+        <p>
+            Counter: <span id="value">0</span> times
+            <button id="increment" onclick="helper.action_increment()">+</button>
+            <button id="decrement" onclick="helper.action_decrement()">-</button>
+            <button id="countDown">Count down async</button>
+        </p>
+    </div>
+
+    <script>
+        window.onload = function () {
+
+            var dIntervalID;
+            document.getElementById('countDown')
+                .addEventListener('click', function () {
+                    dIntervalID = setInterval(function () {
+                        helper.action_decrement();
+                    }, 500);
+                })
+
+            function render() {
+                var current_value = helper.get_state();
+                document.getElementById('value').innerHTML = current_value.toString();
+                if (current_value === 0) {
+                    clearInterval(dIntervalID);
+                    console.log("Interval stopped.");
+                }
+            }
+
+            helper.set_render(render);
+            render()
+        }
+    </script>
 </body>
 </html>
