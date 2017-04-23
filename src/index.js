@@ -1,40 +1,73 @@
-import { createStore } from 'redux'
-// import { List, Map } from 'immutable';
+import {createStore, applyMiddleware} from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import {List, Map} from 'immutable';
 
-function counter(state, action) {
-    if (typeof state === 'undefined') {
-        return 0
-    }
+const defaultStore = new Map({
+    counter: 0,
+    status: 'STOPPED'
+})
+
+export function counter(state = defaultStore, action) {
+
     switch (action.type) {
         case 'INCREMENT':
-            return state + 1
+            return state.set('counter', state.get('counter') + 1)
         case 'DECREMENT':
-            return state - 1;
+            return state.set('counter', state.get('counter') - 1)
+        case 'COUNTDOWN':
+            return state.set('status', 'DOWN')
+        case 'STOP':
+            return state.set('status', 'STOPPED')
         default:
             return state
     }
 }
 
-const store = createStore(counter);
+export const store = createStore(counter, composeWithDevTools(
+    applyMiddleware()
+));
 
 
 /* Helpers */
 
-module.exports = {
-    action_increment: function() {
-        store.dispatch({type: 'INCREMENT'});
-    },
-    action_decrement: function() {
-        store.dispatch({type: 'DECREMENT'})
-    },
+export function action_increment() {
+    store.dispatch({type: 'INCREMENT'})
+}
 
-    get_state: function() {
-        return store.getState();
-    },
-    set_render: function(render_func) {
-        store.subscribe(render_func);
+export function action_decrement() {
+    store.dispatch({type: 'DECREMENT'})
+}
+
+export function action_countdown() {
+    store.dispatch({type: 'COUNTDOWN'})
+}
+
+export function action_stop() {
+    store.dispatch({type: 'STOP'})
+}
+
+export function get_count() {
+    return store.getState().get('counter');
+}
+
+export function set_render(render_func) {
+    store.subscribe(render_func)
+}
+
+
+// Forever loop
+var dIntervalID = setInterval(function () {
+    let status = store.getState().get('status');
+    if (status == 'DOWN') {
+        module.exports.action_decrement();
     }
-};
+    if (module.exports.get_count() === 0 && status == 'DOWN' ) {
+        module.exports.action_stop();
+        console.log("Interval stopped.");
+    }
+}, 500);
+
+
 
 
 
