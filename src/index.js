@@ -1,6 +1,8 @@
 import {createStore, applyMiddleware} from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
+import {composeWithDevTools} from 'redux-devtools-extension';
 import {List, Map} from 'immutable';
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 const defaultStore = new Map({
     counter: 0,
@@ -46,30 +48,37 @@ export function action_stop() {
     store.dispatch({type: 'STOP'})
 }
 
-export function get_count() {
-    return store.getState().get('counter');
+store.subscribe(render);
+
+/* React */
+function Counter(props) {
+    return <h1>{props.value}</h1>;
 }
 
-export function set_render(render_func) {
-    store.subscribe(render_func)
+function render() {
+    let current_value = store.getState().get('counter');
+    ReactDOM.render(
+        <Counter value={current_value}/>,
+        document.getElementById('rCounter')
+    );
 }
 
+window.onload = function(e) {
+    render();
 
-// Forever loop
-var dIntervalID = setInterval(function () {
-    let status = store.getState().get('status');
-    if (status == 'DOWN') {
-        module.exports.action_decrement();
-    }
-    if (module.exports.get_count() === 0 && status == 'DOWN' ) {
-        module.exports.action_stop();
-        console.log("Interval stopped.");
-    }
-}, 500);
+    // Forever loop
+    var dIntervalID = setInterval(function () {
+        let status = store.getState().get('status');
+        if (status == 'DOWN') {
+            module.exports.action_decrement();
+        }
+        let count = store.getState().get('counter');
+        if (count === 0 && status == 'DOWN') {
+            store.dispatch({type: 'STOP'});
+            console.log("Interval stopped.");
+        }
+    }, 500);
 
-
-
-
-
+}
 
 

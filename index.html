@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,27 +6,10 @@
     <script src="dist/bundle.js"></script>
 </head>
 <body>
-
-    <div>
-        <p>
-            Counter: <span id="value">0</span> times
+            <div id="rCounter"></div>
             <button id="increment" onclick="helper.action_increment()">+</button>
             <button id="decrement" onclick="helper.action_decrement()">-</button>
             <button id="countDown" onclick="helper.action_countdown()">Count down async</button>
-        </p>
-    </div>
 
-    <script>
-        window.onload = function () {
-
-            function render() {
-                let current_value = helper.get_count();
-                document.getElementById('value').innerHTML = current_value.toString();
-            }
-
-            helper.set_render(render);
-            render()
-        }
-    </script>
 </body>
 </html>
