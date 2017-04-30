@@ -48,33 +48,42 @@ export function action_stop() {
     store.dispatch({type: 'STOP'})
 }
 
-store.subscribe(render);
+/* selectors */
+
+export function getCounter(state = store.getState()) {
+    return state.get('counter');
+}
+
+export function getStatus(state = store.getState()) {
+    return state.get('status');
+}
 
 /* React */
+
+store.subscribe(render);
+
 function Counter(props) {
     return <h1>{props.value}</h1>;
 }
 
 function render() {
-    let current_value = store.getState().get('counter');
     ReactDOM.render(
-        <Counter value={current_value}/>,
+        <Counter value={getCounter()}/>,
         document.getElementById('rCounter')
     );
 }
 
-window.onload = function(e) {
+window.onload = function (e) {
     render();
 
     // Forever loop
     var dIntervalID = setInterval(function () {
-        let status = store.getState().get('status');
-        if (status == 'DOWN') {
+        if (getStatus() == 'DOWN') {
             module.exports.action_decrement();
         }
-        let count = store.getState().get('counter');
-        if (count === 0 && status == 'DOWN') {
-            store.dispatch({type: 'STOP'});
+
+        if (getCounter() === 0 && status == 'DOWN') {
+            action_stop();
             console.log("Interval stopped.");
         }
     }, 500);

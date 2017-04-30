@@ -24,8 +24,7 @@
   },
   "scripts": {
     "test": "mocha --compilers js:babel-register --require ./test/test_helper.js --recursive",
-    "build": "webpack",
-    "compile": "babel src -d lib --presets env"
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
